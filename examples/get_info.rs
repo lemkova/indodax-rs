@@ -14,10 +14,11 @@ fn main() {
     // Call the get_info function
     match client.get_info() {
         Ok(account_info) => {
-            println!("Account Info: {:?}", account_info);
+            let acc_info: AccountInfo = account_info;
+            println!("Account Info: {:?}", acc_info);
             // User id, user name
-            println!("User ID: {}", account_info.user_id);
-            println!("User Name: {}", account_info.name);
+            println!("User ID: {}", acc_info.user_id);
+            println!("User Name: {}", acc_info.name);
         }
         Err(e) => {
             eprintln!("Error fetching account info: {:?}", e);

@@ -36,7 +36,7 @@ impl Client {
         }
 
         let response = request
-            .query(&params)
+            .form(&params)
             .send()?;
 
         self.handler(response)

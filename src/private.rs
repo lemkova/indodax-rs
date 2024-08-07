@@ -1,7 +1,7 @@
 use crate::{
     client::Client, 
     errors::Result,
-    model::AccountInfo,
+    model::{AccountInfo, OrdersHistory},
 };
 use serde::de::DeserializeOwned;
 use reqwest::header::{HeaderMap, HeaderValue, HeaderName, CONTENT_TYPE, USER_AGENT};
@@ -32,6 +32,12 @@ impl PrivateClient {
         self.post_request(vec![("method", "getInfo")])
     }
 
+    pub fn get_order_history(&self, pair: &str, count: i32) -> Result<OrdersHistory> {
+        let count = count.to_string();
+        let params = vec![("method", "orderHistory"),("pair", pair), ("count", &count)];
+        self.post_request(params)
+    }
+
     pub fn post_request<T: DeserializeOwned>(&self, _params: Vec<(&str, &str)>) -> Result<T> {
         let client = &self.client;
         let mut params: HashMap<String, String>  = HashMap::new();
@@ -59,8 +65,10 @@ impl PrivateClient {
 
         custom_headers.insert(USER_AGENT, HeaderValue::from_static("lmkv-bot"));
         custom_headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/x-www-form-urlencoded"));
-        custom_headers.insert(HeaderName::from_static("Key"), HeaderValue::from_str(&self.api_key.as_str())?);
-        custom_headers.insert(HeaderName::from_static("Sign"), HeaderValue::from_str(&sign)?);
+        custom_headers.insert(HeaderName::from_static("key"), HeaderValue::from_str(&self.api_key.as_str())?);
+        custom_headers.insert(HeaderName::from_static("sign"), HeaderValue::from_str(&sign)?);
+    
+
         Ok(custom_headers)
     }
 
