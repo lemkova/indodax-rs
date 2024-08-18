@@ -2,6 +2,7 @@ use crate::{
     client::Client, 
     errors::Result,
     model::{AccountInfo, OrdersHistory},
+    api::{API,Private},
 };
 use serde::de::DeserializeOwned;
 use reqwest::header::{HeaderMap, HeaderValue, HeaderName, CONTENT_TYPE, USER_AGENT};
@@ -29,21 +30,25 @@ impl PrivateClient {
     }
 
     pub fn get_info(&self) -> Result<AccountInfo> {
-        self.post_request(vec![("method", "getInfo")])
+        self.post_request(API::Private(Private::GetInfo), None)
     }
 
     pub fn get_order_history(&self, pair: &str, count: i32) -> Result<OrdersHistory> {
         let count = count.to_string();
-        let params = vec![("method", "orderHistory"),("pair", pair), ("count", &count)];
-        self.post_request(params)
+        let params = vec![("pair", pair), ("count", &count)];
+        self.post_request(API::Private(Private::OrderHistory), Some(params))
     }
 
-    pub fn post_request<T: DeserializeOwned>(&self, _params: Vec<(&str, &str)>) -> Result<T> {
+    pub fn post_request<T: DeserializeOwned>(&self, method: API, _params: Option<Vec<(&str, &str)>>) -> Result<T> {
         let client = &self.client;
         let mut params: HashMap<String, String>  = HashMap::new();
 
-        for (key, value) in _params {
-            params.insert(key.to_string(), value.to_string());
+        params.insert("method".to_string(), method.into());
+        
+        if let Some(params) = _params {
+            for (key, value) in params {
+                params.insert(key.to_string(), value.to_string());
+            }
         }
 
         let timestamp = build_timestamp_vec();

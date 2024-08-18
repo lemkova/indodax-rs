@@ -34,7 +34,3 @@ impl From<API> for String {
         })
     }
 }
-
-pub trait Indodax {
-    fn new(api_key: Option<String>, secret_key: Option<String>, host: String) -> Self;
-}
