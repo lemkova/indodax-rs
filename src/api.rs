@@ -29,7 +29,7 @@ impl From<API> for String {
                 Private::GetOrder => "getOrder",
                 Private::GetOrderByClientOrderId => "getOrderByClientOrderId",
                 Private::CancelOrder => "cancelOrder",
-                Private::CancelOrderByClientOrderId => "cancelOrderByClientOrderId",
+                Private::CancelOrderByClientOrderId => "cancelByClientOrderId",
             }
         })
     }
